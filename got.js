@@ -439,7 +439,7 @@ let applyDeltasToGraph = function (graph, delta) {
 
 							//* i don't know what delta will trigger this:
 							//* assert(o._props, "propchange failed: object has no _props");
-						} else if (!prop){
+						} else if (prop === undefined || prop === null){
 							throw ('propchange failed: property not found')
 						}
 						
