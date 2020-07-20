@@ -23,8 +23,17 @@ describe('conflicting edits', () => {
     afterEach(() => {
       /* Runs after each test */
     })
-    test.only('this test script is not written yet...', () => {
-    })
+    test('History propchange', () => {
+        let deltas  = [ { 
+          op: 'propchange',
+          path: srcPath,
+          name: 'history',
+          from: localGraph.nodes[parent][child]._props.history,
+          to: "yes" 
+        } ]
+        got.applyDeltasToGraph(g, [deltas])
+        // expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange failed: property value does not match')
+    });
   //   test('Two propchanges with same path, same “from”, but different “to”', () => {
   //       let deltas = [
   //           {"op":"propchange","path":"lfo_1.rate","name":"value","from":0.17,"to":34},

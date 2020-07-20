@@ -28,8 +28,7 @@
   "homepage": "https://github.com/worldmaking/gotlib#readme",
   "jest": {
     "verbose": true,
-    "modulePathIgnorePatterns": [  
-    ],
+    "modulePathIgnorePatterns": [],
     "moduleDirectories": [
       "__tests__/deltas/",
       "node_modules"
@@ -37,5 +36,8 @@
     "reporters": [
       "default"
     ]
+  },
+  "dependencies": {
+    "jest": "^26.1.0"
   }
 }

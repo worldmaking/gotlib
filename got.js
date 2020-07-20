@@ -403,7 +403,7 @@ let applyDeltasToGraph = function (graph, delta) {
 				} else if(delta.from !== undefined){
 					
 					throw ('propchange delta contains no "from" value' + delta.from)
-				} else if(delta.to !== undefined){
+				} else if(delta.to === undefined){
 					throw ('propchange delta contains no "to" value')
 				} else {
 					// console.log('\n\nincoming delta\n\n', delta)
