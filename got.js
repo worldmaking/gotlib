@@ -400,7 +400,7 @@ let applyDeltasToGraph = function (graph, delta) {
 			case "propchange": {
 				if(!delta.path){
 					throw ('propchange delta contains no path')
-				} else if(delta.from !== undefined){
+				} else if(delta.from === undefined){
 					
 					throw ('propchange delta contains no "from" value')
 				} else if(delta.to === undefined){
