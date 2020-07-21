@@ -449,7 +449,7 @@ let applyDeltasToGraph = function (graph, delta) {
 						//else if(delta.from != prop){
 						else if (!floatApproximatelyEqual(delta.from, prop)){
 							//* reject propchange with incorrect value
-							throw `propchange failed: delta.from ${delta.from} does not match current property value ${prop}`
+							throw `propchange failed for ${delta.path}:${delta.name}: delta.from ${delta.from} does not match current property value ${prop}`
 							// console.log(prevPropchange.to, delta.to)
 							//*TODO #1 Two propchanges with same path, same “from”, but different “to”
 							// if(deepEqual(prevPropchange && prevPropchange.path, delta.path) === true && prevPropchange.from === delta.from && prevPropchange.to != delta.to){
