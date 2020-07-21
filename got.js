@@ -239,7 +239,7 @@ let rebase = function(B, A, result) {
 			} break;
 			case "propchange": {
 				// TODO -- are there any potential conflicts?
-				if (b.op == "propchange" && b.path==A.path && b.name==A.name && floatApproximatelyEqual(b.from, a.from) === false) {
+				if (b.op == "propchange" && b.path==A.path && b.name==A.name && approximatelyEqual(b.from, a.from) === false) {
 					// if both A and b change the same property, then they should be merged or sequenced
 					b.from = A.to;
 					// // console.log(b.from, A.to)
@@ -447,7 +447,7 @@ let applyDeltasToGraph = function (graph, delta) {
 						//* propchange with incorrect from value
 
 						//else if(delta.from != prop){
-						else if (!floatApproximatelyEqual(delta.from, prop)){
+						else if (!approximatelyEqual(delta.from, prop)){
 							//* reject propchange with incorrect value
 							throw `propchange failed for ${delta.path}:${delta.name}: delta.from ${delta.from} does not match current property value ${prop}`
 							// console.log(prevPropchange.to, delta.to)
@@ -655,8 +655,25 @@ let deltasToString = function(deltas, indent) {
 	}
 }
 
-let floatApproximatelyEqual = function(x, y){
-	return (Math.abs(x-y)/Math.abs(x)) < 0.0001;
+let approximatelyEqual = function(x, y) {
+	if (typeof x == "number" && typeof y == "number") {
+		// ok if x or y are near zero, 
+		// or the error is much smaller than the old value:		
+		return 	(Math.abs(x) < 0.001 || Math.abs(y) < 0.001) 
+		|| (Math.abs(x-y)/Math.abs(x)) < 0.001;
+	} else if (Array.isArray(x) && Array.isArray(y)) {
+		// TODO: this won't work for quaternions, because they are strange
+		// console.log("comparing arrays", x, y)
+		// if (x.length != y.length) throw `can't appoximate arrays of different length`
+		// let ok = true;
+		// for (let i=0; i<x.length; i++) {
+		// 	console.log("comparing", x[i], y[i], approximatelyEqual(x[i], y[i]))
+		// 	ok = ok && approximatelyEqual(x[i], y[i]);
+		// }
+		return true;//x.every((v,i)=>approximatelyEqual(v,y[i]));
+	}
+	throw `can't handle approximate equality for this type of data: ${typeof x}`
+	
 }
 
 module.exports = {
