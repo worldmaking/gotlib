@@ -475,13 +475,7 @@ let applyDeltasToGraph = function (graph, delta) {
 						//*TODO #4 A longer sequence of the basic form of #1
 
 
-				
-						// assert 'from' value matches object's current value
-						else if (deepEqual(prop, delta.from) === false){
-
-							console.log(delta.from)
-							// throw (delta.to + ' ' +  prop + ' ' +  delta.from)
-						} 
+			
 						
 						// // ! ensure that this does not result a false positive from a correct delta. 
 						// else if (previousDelta !== undefined && deepEqual(delta.from, previousDelta.from) === true && deepEqual(delta.to, prop) === false){
