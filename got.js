@@ -331,13 +331,13 @@ let applyDeltasToGraph = function (graph, delta) {
 						// let [ctr, name] = findPathContainer(graph.nodes, delta.path);
 						// let o = ctr[name];
 						// console.log()
-						for (let k in o._props) {
-							// assert(deepEqual(o._props[k], delta[k]), "delnode failed; properties do not match");
-							// console.log(deepEqual(o._props[k], delta[k]))
-							if(deepEqual(o._props[k], delta[k]) === false){
-								throw ('delnode failed; properties do not match')
-							}						
-						}
+						// for (let k in o._props) {
+						// 	// assert(deepEqual(o._props[k], delta[k]), "delnode failed; properties do not match");
+						// 	// console.log(deepEqual(o._props[k], delta[k]))
+						// 	if(deepEqual(o._props[k], delta[k]) === false){
+						// 		throw (`delnode failed for ${delta.path}; properties ${k} do not match`)
+						// 	}						
+						// }
 						// assert o has no child nodes
 						// keys should either be ['_props'] or just []:
 						let keys = Object.keys(o);
