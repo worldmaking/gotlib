@@ -85,6 +85,7 @@ describe('acceptable deltas', () => {
 
 })
 
+// any of these deltas should cause the whole packet of B to be rejected (stop the loop through deltas), and resync the user's graph by disconnecting them
 describe('malformed deltas', () => {
     beforeAll(() => {
     })
@@ -103,22 +104,42 @@ describe('malformed deltas', () => {
 	// newnode without a path
 	test('reject newnode without a path', () => {
         let deltas = {"op":"newnode","path":"","kind":"lfo","pos":[-2.326367085370336,1.5209056349935186,-0.7035861792005239],"orient":[0.12358177055502231,0.41713355199484253,0.13623412932103282,0.8900378687419946]}
-        expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('newnode delta contains no path')
+		let g1 = got.applyDeltasToGraph(g, deltas)
+		// g1[0] is the graph, g1[1] is the errorMSG
+		expect(g1[0]).toMatchObject(simpleSceneSuccess);
+		expect(g1[1].error).toBe('newnode delta contains no path');
+		// expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('newnode delta contains no path')
     });
 	// delnode without a path
 	test('reject delnode without a path', () => {
 		let deltas = {"op":"delnode","path":"","kind":"lfo","pos":[-2.326367085370336,1.5209056349935186,-0.7035861792005239],"orient":[0.12358177055502231,0.41713355199484253,0.13623412932103282,0.8900378687419946]}
-		expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('delnode delta contains no path')
+		let g1 = got.applyDeltasToGraph(g, deltas)
+		// g1[0] is the graph, g1[1] is the errorMSG
+		expect(g1[0]).toMatchObject(simpleSceneSuccess);
+		expect(g1[1].error).toBe('delnode delta contains no path');
+
+		// expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('delnode delta contains no path')
 	});
 	// propchange without a path
 	test('reject propchange without a path', () => {
         let deltas = {"op": "propchange" ,"path": "", "name": "value","from": 0.17,"to": 0.7005339838596962,"timestamp": 1571343253980}
-		expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange delta contains no path')
+		let g1 = got.applyDeltasToGraph(g, deltas)
+		// g1[0] is the graph, g1[1] is the errorMSG
+		expect(g1[0]).toMatchObject(simpleSceneSuccess);
+		expect(g1[1].error).toBe('propchange delta contains no path');
+		// expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange delta contains no path')
 	});	
+
 	// propchange without a "from" value
-	test('reject propchange without a "from" value', () => {
+	test.only('reject propchange without a "from" value', () => {
 		let deltas = {"op": "propchange" ,"path": "lfo_1.fm_cv", "name": "value","from": null,"to": 0.7005339838596962,"timestamp": 1571343253980}
-		expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange delta contains no "from" value')
+		
+		let g1 = got.applyDeltasToGraph(g, deltas)
+		// g1[0] is the graph, g1[1] is the errorMSG
+		expect(g1[0]).toMatchObject(simpleSceneSuccess);
+		expect(g1[1].error).toBe('propchange delta contains no "from" value');
+		
+		// expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange delta contains no "from" value')
 	});	
 	// propchange without a "to" value
 	test('reject propchange without a "to" value', () => {

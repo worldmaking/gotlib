@@ -37,7 +37,8 @@
       "default"
     ]
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "jest": "^26.1.0"
   }
 }

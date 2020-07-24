@@ -260,13 +260,34 @@ let mergeDeltasToGraph = function(graph, deltasA, deltasB) {
 	*/
 	
 }
-let gotHistory = []
-let  prevRepath, prevNewnode, prevDelnode, prevPropchange
 
+// this function will invert the deltas already applied and return a rejection message
+let malformedDeltaRejection = function(malformedDelta, appliedDeltas, errorMsg, graph){
+	appliedDeltas.pop() // remove the malformedDelta
+	// get the inverse of the deltas that were successfully applied up to (and less) the malformed delta
+	let rewindDeltas = inverseDelta(appliedDeltas)
+	// rewind the changes:
+	applyDeltasToGraph(graph, rewindDeltas)
+	// clear the appliedDeltas for the next incoming batch
+	appliedDeltas = []
+	// create a msg to pass to the app.js or host.js in order to perform the nuclear option
+	rejectionMsg = {
+		error: errorMsg,
+		inverseDeltas: rewindDeltas,
+		malformedDelta: malformedDelta
+	}
+	return rejectionMsg 
+}
+let rejectionMsg = null
+let gotHistory = []
+let prevRepath, prevNewnode, prevDelnode, prevPropchange
+let appliedDeltas = [];
 let applyDeltasToGraph = function (graph, delta) {
+	rejectionMsg = null
 	if (Array.isArray(delta)) {
 		for (let d of delta) {
-
+			// temporarily store each delta so that if theres an error we can invert them
+			appliedDeltas.push(d)
 			applyDeltasToGraph(graph, d);
 			previousDelta = delta
 		}
@@ -309,7 +330,9 @@ let applyDeltasToGraph = function (graph, delta) {
 			
 			case "newnode": {
 				if(!delta.path){
-					throw ('newnode delta contains no path')
+					
+					malformedDeltaRejection(delta, appliedDeltas, 'newnode delta contains no path', graph)
+					break 
 				} else {
 					let o = makePath(graph.nodes, delta.path);
 					copyProps(delta, o._props);					
@@ -317,7 +340,8 @@ let applyDeltasToGraph = function (graph, delta) {
 			} break;
 			case "delnode": {
 				if(!delta.path){
-					throw ('delnode delta contains no path')
+					malformedDeltaRejection(delta, appliedDeltas, 'delnode delta contains no path', graph)
+					break 
 				} else {
 					let [ctr, name] = findPathContainer(graph.nodes, delta.path);
 					if(!ctr){
@@ -399,10 +423,12 @@ let applyDeltasToGraph = function (graph, delta) {
 
 			case "propchange": {
 				if(!delta.path){
-					throw ('propchange delta contains no path')
+
+					malformedDeltaRejection(delta, appliedDeltas, 'propchange delta contains no path', graph)
+					break 
 				} else if(delta.from === undefined){
-					
-					throw ('propchange delta contains no "from" value')
+					malformedDeltaRejection(delta, appliedDeltas, 'propchange delta contains no "from" value', graph)
+					break 
 				} else if(delta.to === undefined){
 					throw ('propchange delta contains no "to" value')
 				} else {
@@ -530,7 +556,15 @@ let applyDeltasToGraph = function (graph, delta) {
 			} break;
 		}
 	}
-	return graph;
+	if(rejectionMsg){
+		appliedDeltas = [];
+		return [graph, rejectionMsg]
+	} else {
+		appliedDeltas = [];
+		return graph;
+	}
+	
+	
 }
 
 let makeGraph = function(deltas) {
