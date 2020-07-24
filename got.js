@@ -295,7 +295,8 @@ let applyDeltasToGraph = function (graph, delta) {
 		switch (delta.op) {
 			case "repath": {
 				if(delta.paths.length < 2 || !delta.paths[0] || !delta.paths[1]){
-					throw ('propchange repath is missing one or more path(s)')
+					malformedDeltaRejection(delta, appliedDeltas, 'propchange repath is missing one or more path(s)', graph)
+					break
 				} else  {
 
 					
@@ -376,9 +377,11 @@ let applyDeltasToGraph = function (graph, delta) {
 			} break;
 			case "connect": {
 				if(delta.paths.length < 2 || !delta.paths[0] || !delta.paths[1]){
-					throw ('propchange connect is missing one or more path(s)')
+					malformedDeltaRejection(delta, appliedDeltas, 'propchange connect is missing one or more path(s)', graph)
+					break
 				} else if(delta.paths[0] === delta.paths[1]){
-					throw('propchange connect contains identical paths')
+					malformedDeltaRejection(delta, appliedDeltas, 'propchange connect contains identical paths', graph)
+					break
 				}
 				else {
 					// ensure connection does not yet exist
@@ -395,9 +398,11 @@ let applyDeltasToGraph = function (graph, delta) {
 			} break;
 			case "disconnect": {
 				if(delta.paths.length < 2 || !delta.paths[0] || !delta.paths[1]){
-					throw ('propchange disconnect is missing one or more path(s)')
+					malformedDeltaRejection(delta, appliedDeltas, 'propchange disconnect is missing one or more path(s)', graph)
+					break
 				} else if(delta.paths[0] === delta.paths[1]){
-					throw('propchange disconnect contains identical paths')
+					malformedDeltaRejection(delta, appliedDeltas, 'propchange disconnect contains identical paths', graph)
+					break
 				}
 				// find matching arc; there should only be 1.
 				let index = -1;
@@ -430,7 +435,8 @@ let applyDeltasToGraph = function (graph, delta) {
 					malformedDeltaRejection(delta, appliedDeltas, 'propchange delta contains no "from" value', graph)
 					break 
 				} else if(delta.to === undefined){
-					throw ('propchange delta contains no "to" value')
+					malformedDeltaRejection(delta, appliedDeltas, 'propchange delta contains no "to" value', graph)
+					break 
 				} else {
 					// console.log('\n\nincoming delta\n\n', delta)
 
@@ -467,6 +473,7 @@ let applyDeltasToGraph = function (graph, delta) {
 							//* i don't know what delta will trigger this:
 							//* assert(o._props, "propchange failed: object has no _props");
 						} else if (prop === undefined || prop === null){
+							console.log(o)
 							throw ('propchange failed: property not found')
 						}
 						

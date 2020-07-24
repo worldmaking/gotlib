@@ -119,7 +119,7 @@ describe('malformed deltas', () => {
 		expect(g1[1].error).toBe('delnode delta contains no path');
 
 		// expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('delnode delta contains no path')
-	});
+	}); 
 	// propchange without a path
 	test('reject propchange without a path', () => {
         let deltas = {"op": "propchange" ,"path": "", "name": "value","from": 0.17,"to": 0.7005339838596962,"timestamp": 1571343253980}
@@ -131,8 +131,8 @@ describe('malformed deltas', () => {
 	});	
 
 	// propchange without a "from" value
-	test.only('reject propchange without a "from" value', () => {
-		let deltas = {"op": "propchange" ,"path": "lfo_1.fm_cv", "name": "value","from": null,"to": 0.7005339838596962,"timestamp": 1571343253980}
+	test('reject propchange without a "from" value', () => {
+		let deltas = {"op": "propchange" ,"path": "lfo_1.rate", "name": "value","from": undefined,"to": 0.7005339838596962,"timestamp": 1571343253980}
 		
 		let g1 = got.applyDeltasToGraph(g, deltas)
 		// g1[0] is the graph, g1[1] is the errorMSG
@@ -143,8 +143,13 @@ describe('malformed deltas', () => {
 	});	
 	// propchange without a "to" value
 	test('reject propchange without a "to" value', () => {
-		let deltas = {"op": "propchange" ,"path": "lfo_1.fm_cv", "name": "value","from": 0.17,"to": null,"timestamp": 1571343253980}
-		expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange delta contains no "to" value')
+		let deltas = {"op": "propchange" ,"path": "lfo_1.fm_cv", "name": "value","from": 0.17,"to": undefined,"timestamp": 1571343253980}
+		
+		let g1 = got.applyDeltasToGraph(g, deltas)
+		// g1[0] is the graph, g1[1] is the errorMSG
+		expect(g1[0]).toMatchObject(simpleSceneSuccess);
+		expect(g1[1].error).toBe('propchange delta contains no "to" value');
+		// expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange delta contains no "to" value')
 	});	
 
 	// Connect without either or both of the paths
@@ -153,7 +158,12 @@ describe('malformed deltas', () => {
         // // // ab = got.deepCopy(g);
         // let g1 = got.applyDeltasToGraph(g, [deltas])
 		// expect(g1).toMatchObject(connectSuccess);
-		expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange connect is missing one or more path(s)')
+		let g1 = got.applyDeltasToGraph(g, deltas)
+		// g1[0] is the graph, g1[1] is the errorMSG
+		expect(g1[0]).toMatchObject(simpleSceneSuccess);
+		expect(g1[1].error).toBe('propchange connect is missing one or more path(s)');
+
+		// expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange connect is missing one or more path(s)')
 
     });
 	// Connect if both paths are equal
@@ -162,7 +172,12 @@ describe('malformed deltas', () => {
         // // // ab = got.deepCopy(g);
         // let g1 = got.applyDeltasToGraph(g, [deltas])
 		// expect(g1).toMatchObject(connectSuccess);
-		expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange connect contains identical paths')
+		let g1 = got.applyDeltasToGraph(g, deltas)
+		// g1[0] is the graph, g1[1] is the errorMSG
+		expect(g1[0]).toMatchObject(simpleSceneSuccess);
+		expect(g1[1].error).toBe('propchange connect contains identical paths');
+
+		// expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange connect contains identical paths')
 
 	});
 	
@@ -172,7 +187,11 @@ describe('malformed deltas', () => {
 		// // // ab = got.deepCopy(g);
 		// let g1 = got.applyDeltasToGraph(g, [deltas])
 		// expect(g1).toMatchObject(connectSuccess);
-		expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange disconnect is missing one or more path(s)')
+		let g1 = got.applyDeltasToGraph(g, deltas)
+		// g1[0] is the graph, g1[1] is the errorMSG
+		expect(g1[0]).toMatchObject(simpleSceneSuccess);
+		expect(g1[1].error).toBe('propchange disconnect is missing one or more path(s)');
+		// expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange disconnect is missing one or more path(s)')
 
 	});
 	// Disconnect if both paths are equal
@@ -181,16 +200,28 @@ describe('malformed deltas', () => {
 		// // // ab = got.deepCopy(g);
 		// let g1 = got.applyDeltasToGraph(g, [deltas])
 		// expect(g1).toMatchObject(connectSuccess);
-		expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange disconnect contains identical paths')
+		let g1 = got.applyDeltasToGraph(g, deltas)
+		// g1[0] is the graph, g1[1] is the errorMSG
+		expect(g1[0]).toMatchObject(simpleSceneSuccess);
+		expect(g1[1].error).toBe('propchange disconnect contains identical paths');
+		// expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange disconnect is missing one or more path(s)')
+
+		// expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange disconnect contains identical paths')
 
 	});
 	// Repath missing either or both of the paths
-	test('reject repath missing either or both of the paths', () => {
+	test.only('reject repath missing either or both of the paths', () => {
         let deltas = {"op": "repath", "paths": [ "", "lfo_1.sine"]}
 		// // // ab = got.deepCopy(g);
 		// let g1 = got.applyDeltasToGraph(g, [deltas])
 		// expect(g1).toMatchObject(connectSuccess);
-		expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange repath is missing one or more path(s)')
+		let g1 = got.applyDeltasToGraph(g, deltas)
+		// g1[0] is the graph, g1[1] is the errorMSG
+		expect(g1[0]).toMatchObject(simpleSceneSuccess);
+		expect(g1[1].error).toBe('propchange repath is missing one or more path(s)');
+		// expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange disconnect is missing one or more path(s)')
+
+		// expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange repath is missing one or more path(s)')
 
 	});
 
