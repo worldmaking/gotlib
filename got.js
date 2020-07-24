@@ -85,7 +85,6 @@ let makePath = function(root, path) {
 		n = n[k];
 	}
 	if(n[last]){
-		//*TODO #6 Two newnode edits with the same path
 
 		// A1: newnode @x
 		// B1: newnode @x
@@ -389,8 +388,13 @@ let applyDeltasToGraph = function (graph, delta) {
 						// arc doesn't yet exist, so make it
 						graph.arcs.push([ delta.paths[0], delta.paths[1] ]);
 					} else {
-						// arc already exists, throw error
-						throw ('connect failed: arc already exists')
+						// arc already exists
+
+						// preserve intention by inverting connection [A], then apply connection [B]
+						let inverted = inverseDelta(delta)
+						let resolve = [inverted, delta]
+						applyDeltasToGraph(graph, resolve)
+						// throw ('connect failed: arc already exists')
 					}
 				}
 
@@ -421,7 +425,14 @@ let applyDeltasToGraph = function (graph, delta) {
 				if(index != -1){
 					graph.arcs.splice(index, 1);
 				} else {
-					throw ('disconnect failed: no matching arc found')
+ 
+					// arc doesn't exist
+
+					// preserve intention by inverting disconnect [A], then apply disconnect [B]
+					let inverted = inverseDelta(delta)
+					let resolve = [inverted, delta]
+					applyDeltasToGraph(graph, resolve)
+					// throw ('disconnect failed: no matching arc found')
 
 				}
 			} break;

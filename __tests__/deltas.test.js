@@ -210,7 +210,7 @@ describe('malformed deltas', () => {
 
 	});
 	// Repath missing either or both of the paths
-	test.only('reject repath missing either or both of the paths', () => {
+	test('reject repath missing either or both of the paths', () => {
         let deltas = {"op": "repath", "paths": [ "", "lfo_1.sine"]}
 		// // // ab = got.deepCopy(g);
 		// let g1 = got.applyDeltasToGraph(g, [deltas])
@@ -227,7 +227,7 @@ describe('malformed deltas', () => {
 
 });
 
-describe('incorrect deltas', () => {
+describe('conflicting deltas', () => {
     beforeAll(() => {
     })
     afterAll(() => {
@@ -293,16 +293,24 @@ describe('incorrect deltas', () => {
         // got.applyDeltasToGraph(g, [deltas])
     });
     // working
-    test('reject duplicate connect', () => {
-        let deltas = {"op": "connect", "paths": [ "lfo_1.sine", "lfo_1.cv"]}
-        expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('connect failed: arc already exists')
+    test('merge a duplicate connect', () => {
+		let deltas = {"op": "connect", "paths": [ "lfo_1.sine", "lfo_1.cv"]}
+		
+		let g1 = got.applyDeltasToGraph(g, deltas)
+		// g1[0] is the graph, g1[1] is the errorMSG
+		expect(g1).toMatchObject(simpleSceneSuccess);
+
+        // expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('connect failed: arc already exists')
         // expect(typeof g).toBe('object');
     });
     // working
-    test('reject disconnect on nonexistent path', () => {
+    test.only('merge a disconnect on nonexistent connection', () => {
         let deltas = {"op": "disconnect", "paths": [ "lfo_1.sine", "lfo_1.rate"]}
-        // got.applyDeltasToGraph(g, [deltas])
-        expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('disconnect failed: no matching arc found')
+		// got.applyDeltasToGraph(g, [deltas])
+		let g1 = got.applyDeltasToGraph(g, deltas)
+		// g1[0] is the graph, g1[1] is the errorMSG
+		expect(g1).toMatchObject(simpleSceneSuccess);
+        // expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('disconnect failed: no matching arc found')
     });
 
     test('reject repath on nonexistent source-path', () => {
