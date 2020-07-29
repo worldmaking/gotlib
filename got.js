@@ -73,8 +73,8 @@ let findPathContainer = function(tree, path) {
 
 // given path "a.b.c.d", creates object root.a.b.c.d
 // throws error if root.a.b.c doesn't exist
-// throws error if root.a.b.c.d already exists
-let makePath = function(root, path) {
+// repaths if root.a.b.c.d already exists
+let makePath = function(root, path, graph) {
 	let steps = path.split(".");
 	let last = steps.pop();
 	let n = root;
@@ -96,8 +96,9 @@ let makePath = function(root, path) {
 		// A1: newnode @x
 
 		// Using a repath delta ensures that the name change can propagate for longer sequences of edits too. 
-
-		throw "newnode failed: path already exists"
+		// repath A
+		//! Need to ask Graham how to call a repath?
+		throw "NOTE: Not sure how to run a repath."
 
 	}
 	let o = { _props: {} };
@@ -277,6 +278,25 @@ let malformedDeltaRejection = function(malformedDelta, appliedDeltas, errorMsg, 
 	}
 	return rejectionMsg 
 }
+
+// this function will block a delta for which we don't yet have a merge strategy, will undo previously applied deltas, and reports the error to the parent
+let conflictDeltaRejection = function(conflictDelta, appliedDeltas, errorMsg, graph){
+	appliedDeltas.pop() // remove the malformedDelta
+	// get the inverse of the deltas that were successfully applied up to (and less) the malformed delta
+	let rewindDeltas = inverseDelta(appliedDeltas)
+	// rewind the changes:
+	applyDeltasToGraph(graph, rewindDeltas)
+	// clear the appliedDeltas for the next incoming batch
+	appliedDeltas = []
+	// create a msg to pass to the app.js or host.js in order to perform the nuclear option
+	rejectionMsg = {
+		error: errorMsg,
+		inverseDeltas: rewindDeltas,
+		conflictDelta: conflictDelta
+	}
+	return rejectionMsg 
+}
+
 let rejectionMsg = null
 let gotHistory = []
 let prevRepath, prevNewnode, prevDelnode, prevPropchange
@@ -329,12 +349,15 @@ let applyDeltasToGraph = function (graph, delta) {
 			} break;
 			
 			case "newnode": {
+				
 				if(!delta.path){
 					
 					malformedDeltaRejection(delta, appliedDeltas, 'newnode delta contains no path', graph)
 					break 
-				} else {
-					let o = makePath(graph.nodes, delta.path);
+				} 
+		
+				else {
+					let o = makePath(graph.nodes, delta.path, graph);
 					copyProps(delta, o._props);					
 				}
 			} break;
@@ -432,7 +455,6 @@ let applyDeltasToGraph = function (graph, delta) {
 					let inverted = inverseDelta(delta)
 					let resolve = [inverted, delta]
 					applyDeltasToGraph(graph, resolve)
-					// throw ('disconnect failed: no matching arc found')
 
 				}
 			} break;
@@ -448,7 +470,9 @@ let applyDeltasToGraph = function (graph, delta) {
 				} else if(delta.to === undefined){
 					malformedDeltaRejection(delta, appliedDeltas, 'propchange delta contains no "to" value', graph)
 					break 
-				} else {
+				}
+				
+				else {
 					// console.log('\n\nincoming delta\n\n', delta)
 
 					/*
@@ -465,20 +489,20 @@ let applyDeltasToGraph = function (graph, delta) {
 					// change it:s
 					o._props[delta.name] = delta.to;
 					*/
-					// /*
+					// 
 					let [ctr, name] = findPathContainer(graph.nodes, delta.path);
+
 					if (!ctr){
 
 						// assert object & property exist:
-						throw ('propchange failed: path not found')
+						// throw ('propchange failed: path not found')
 						// assert(o, "propchange failed: path not found");
 
-					} else {
+					} 
+					else {
 
 						let o = ctr[name];
 						let prop = o._props[delta.name];
-
-
 						if(!o._props){
 
 							//* i don't know what delta will trigger this:
@@ -507,16 +531,11 @@ let applyDeltasToGraph = function (graph, delta) {
 
 						// }
 
-						//*TODO #2 Two propchanges with same path, same “from”, same “to”
 
 						else if(previousDelta && delta.path === previousDelta.path && delta.from === previousDelta.from && previousDelta.to === delta.to){
 							console.log('snared')
 						}
 
-						//*TODO #3 A longer sequence of the basic form of #1
-
-
-						//*TODO #4 A longer sequence of the basic form of #1
 
 
 			
@@ -546,6 +565,9 @@ let applyDeltasToGraph = function (graph, delta) {
 
 						//  } 
 						
+						else if (prop != delta.from){
+							conflictDeltaRejection(delta, appliedDeltas, 'propchange "from" value does not match current value in graph', graph)
+						}
 						else {
 							// change it:
 							o._props[delta.name] = delta.to;
@@ -570,7 +592,7 @@ let applyDeltasToGraph = function (graph, delta) {
 
 				
 				//console.log('prev', previousDelta)
-				// */
+				// 
 			} break;
 		}
 	}

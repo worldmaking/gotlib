@@ -259,15 +259,35 @@ describe('conflicting deltas', () => {
     // });
     
     // working
-    test('reject propchange with incorrect value', () => {
+    test('handle propchange when "from" != current value in graph', () => {
         let deltas = {"op": "propchange","path": "lfo_1.rate", "name": "value","from": 0.78,"to": 0.7005339838596962,"timestamp": 1571343253980}
-        expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange failed: delta.from does not match current property value')
+		// current lfo_1.rate = 0.17, but incoming delta's "from" is 0.78
+		// let path = deltas.path.split('.')
+		// console.log(g.nodes[path[0]][path[1]]._props.value)
+		let g1 = got.applyDeltasToGraph(g, deltas)
+		// g1[0] is the graph, g1[1] is the errorMSG
+		console.log(g1[0], g1[1])
+		expect(g1[0]).toMatchObject(simpleSceneSuccess);
+		expect(g1[1].error).toBe('propchange "from" value does not match current value in graph');
+		
+		
+		// expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('propchange failed: delta.from does not match current property value')
     });
-    // working
-    test('reject a duplicate newnode', () => {
+    // not working
+    test('repath a duplicate newnode ', () => {
         let deltas = [[{"op":"newnode","path":"lfo_1","kind":"lfo","pos":[-2.326367085370336,1.5209056349935186,-0.7035861792005239],"orient":[0.12358177055502231,0.41713355199484253,0.13623412932103282,0.8900378687419946]},[{"op":"newnode","path":"lfo_1.fm_cv","kind":"inlet","index":0}],[{"op":"newnode","path":"lfo_1.phasor_sync","kind":"inlet","index":1}],[{"op":"newnode","path":"lfo_1.pulse_width_cv","kind":"inlet","index":2}],[{"op":"newnode","path":"lfo_1.rate","kind":"large_knob","range":[0,80],"taper":"log 3.8","value":0.17,"unit":"Hz"}],[{"op":"newnode","path":"lfo_1.index","kind":"small_knob","range":[0,10],"taper":"linear","value":3,"unit":"float"}],[{"op":"newnode","path":"lfo_1.pulse_width","kind":"small_knob","range":[0,1],"taper":"linear","value":5,"unit":"float"}],[{"op":"newnode","path":"lfo_1.onset","kind":"small_knob","range":[0,1],"taper":"linear","value":2.8,"unit":"float"}],[{"op":"newnode","path":"lfo_1.sine","kind":"outlet","index":0}],[{"op":"newnode","path":"lfo_1.phasor","kind":"outlet","index":1}],[{"op":"newnode","path":"lfo_1.pulse","kind":"outlet","index":2}],[{"op":"newnode","path":"lfo_1.sine_index","kind":"outlet","index":3}]]]
-        expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('newnode failed: path already exists')
-    });
+		
+		expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('newnode failed: path already exists')
+	});
+	
+	// not working
+	test('merge a duplicate newnode with same properties', () => {
+		let deltas = [{"op":"newnode","path":"lfo_1","kind":"lfo","pos":[-2.326367085370336,1.5209056349935186,-0.7035861792005239],"orient":[0.12358177055502231,0.41713355199484253,0.13623412932103282,0.8900378687419946]},[{"op":"newnode","path":"lfo_1.fm_cv","kind":"inlet","index":0}],[{"op":"newnode","path":"lfo_1.phasor_sync","kind":"inlet","index":1}],[{"op":"newnode","path":"lfo_1.pulse_width_cv","kind":"inlet","index":2}],[{"op":"newnode","path":"lfo_1.rate","kind":"large_knob","range":[0,80],"taper":"log 3.8","value":0.17,"unit":"Hz"}],[{"op":"newnode","path":"lfo_1.index","kind":"small_knob","range":[0,10],"taper":"linear","value":3,"unit":"float"}],[{"op":"newnode","path":"lfo_1.pulse_width","kind":"small_knob","range":[0,1],"taper":"linear","value":5,"unit":"float"}],[{"op":"newnode","path":"lfo_1.onset","kind":"small_knob","range":[0,1],"taper":"linear","value":2.8,"unit":"float"}],[{"op":"newnode","path":"lfo_1.sine","kind":"outlet","index":0}],[{"op":"newnode","path":"lfo_1.phasor","kind":"outlet","index":1}],[{"op":"newnode","path":"lfo_1.pulse","kind":"outlet","index":2}],[{"op":"newnode","path":"lfo_1.sine_index","kind":"outlet","index":3}]]	
+		let g1 = got.applyDeltasToGraph(g, deltas)
+		// g1[0] is the graph, g1[1] is the errorMSG
+		expect(g1).toMatchObject(simpleSceneSuccess);
+		//  expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError('newnode failed: path already exists')
+	});
 
     // working
     test('reject an invalid parent path for newnode', () => {
@@ -304,7 +324,7 @@ describe('conflicting deltas', () => {
         // expect(typeof g).toBe('object');
     });
     // working
-    test.only('merge a disconnect on nonexistent connection', () => {
+    test('merge a disconnect on nonexistent connection', () => {
         let deltas = {"op": "disconnect", "paths": [ "lfo_1.sine", "lfo_1.rate"]}
 		// got.applyDeltasToGraph(g, [deltas])
 		let g1 = got.applyDeltasToGraph(g, deltas)
@@ -344,24 +364,22 @@ describe('conflicting delta sequences', () => {
       /* Runs after each test */
     })
 
-    test('#1 Two propchanges with same path, same “from”, but different “to”',  () =>{
+    test.only('#1 Two propchanges with same path, same “from”, but different “to”',  () =>{
         let deltas = [
             {"op":"propchange","path":"lfo_1.rate","name":"value","from":0.17,"to":34},
             {"op":"propchange","path":"lfo_1.rate","name":"value","from":0.17,"to":36}
         ]
-        
-        expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError("2 deltas w/ same path and from, different to")
+        // i wonder if first, before running the got, it should crawl through the delta array, locate any propchanges which have the same path/from 
+        // expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError("2 deltas w/ same path and from, different to")
+		let g1 = got.applyDeltasToGraph(g, deltas)
+		// g1[0] is the graph, g1[1] is the errorMSG
+		console.log(g1[0], g1[1])
+		expect(g1[0]).toMatchObject(simpleSceneSuccess);
+		expect(g1[1].error).toBe('propchange "from" value does not match current value in graph');
 
+		
     })
-    // test.only('catch 2 repaths with same path, same “from”, but different “to”', () => {
-    //     let deltas = [
-    //         {"op": "repath", "paths": [ "lfo_1.fm_cv", "lfo_1.sine"]},
-    //         {"op": "repath", "paths": [ "lfo_1.fm_cv", "lfo_1.phasor"]}
-    //     ]
-    //     got.applyDeltasToGraph(g, [deltas])  
-    //     expect(() => got.applyDeltasToGraph(g, [deltas])).toThrowError("snare")
 
-    // })
 
 })
 
