@@ -294,7 +294,9 @@ let conflictDeltaRejection = function(conflictDelta, appliedDeltas, errorMsg, gr
 		inverseDeltas: rewindDeltas,
 		conflictDelta: conflictDelta
 	}
-	return rejectionMsg 
+	//TODO: this function seems to be causing false positives in the nuclear option, so for now we will not return the error
+	return null
+	// return rejectionMsg 
 }
 
 let rejectionMsg = null
