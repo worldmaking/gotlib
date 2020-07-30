@@ -280,12 +280,12 @@ let malformedDeltaRejection = function(malformedDelta, appliedDeltas, errorMsg, 
 }
 
 // this function will block a delta for which we don't yet have a merge strategy, will undo previously applied deltas, and reports the error to the parent
-let conflictDeltaRejection = function(conflictDelta, appliedDeltas, errorMsg, graph){
-	appliedDeltas.pop() // remove the malformedDelta
-	// get the inverse of the deltas that were successfully applied up to (and less) the malformed delta
-	let rewindDeltas = inverseDelta(appliedDeltas)
-	// rewind the changes:
-	applyDeltasToGraph(graph, rewindDeltas)
+let conflictDeltaWarning = function(conflictDelta, appliedDeltas, errorMsg, graph){
+	// appliedDeltas.pop() // remove the malformedDelta
+	// // get the inverse of the deltas that were successfully applied up to (and less) the malformed delta
+	// let rewindDeltas = inverseDelta(appliedDeltas)
+	// // rewind the changes:
+	// applyDeltasToGraph(graph, rewindDeltas)
 	// clear the appliedDeltas for the next incoming batch
 	appliedDeltas = []
 	// create a msg to pass to the app.js or host.js in order to perform the nuclear option
@@ -568,7 +568,7 @@ let applyDeltasToGraph = function (graph, delta) {
 						//  } 
 						
 						else if (prop != delta.from){
-							conflictDeltaRejection(delta, appliedDeltas, 'propchange "from" value does not match current value in graph', graph)
+							conflictDeltaWarning(delta, appliedDeltas, 'warning: propchange "from" value does not match current value in graph', graph)
 						}
 						else {
 							// change it:
