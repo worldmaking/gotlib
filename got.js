@@ -283,7 +283,7 @@ let malformedDeltaRejection = function(malformedDelta, appliedDeltas, errorMsg, 
 let conflictDeltaWarning = function(conflictDelta, appliedDeltas, errorMsg, graph){
 	// appliedDeltas.pop() // remove the malformedDelta
 	// // get the inverse of the deltas that were successfully applied up to (and less) the malformed delta
-	// let rewindDeltas = inverseDelta(appliedDeltas)
+	let rewindDeltas = inverseDelta(appliedDeltas)
 	// // rewind the changes:
 	// applyDeltasToGraph(graph, rewindDeltas)
 	// clear the appliedDeltas for the next incoming batch
