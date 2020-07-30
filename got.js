@@ -272,6 +272,7 @@ let malformedDeltaRejection = function(malformedDelta, appliedDeltas, errorMsg, 
 	appliedDeltas = []
 	// create a msg to pass to the app.js or host.js in order to perform the nuclear option
 	rejectionMsg = {
+		type: 'malformedDelta',
 		error: errorMsg,
 		inverseDeltas: rewindDeltas,
 		malformedDelta: malformedDelta
@@ -281,7 +282,7 @@ let malformedDeltaRejection = function(malformedDelta, appliedDeltas, errorMsg, 
 
 // this function will block a delta for which we don't yet have a merge strategy, will undo previously applied deltas, and reports the error to the parent
 let conflictDeltaWarning = function(conflictDelta, appliedDeltas, errorMsg, graph){
-	// appliedDeltas.pop() // remove the malformedDelta
+	appliedDeltas.pop() // remove the malformedDelta
 	// // get the inverse of the deltas that were successfully applied up to (and less) the malformed delta
 	let rewindDeltas = inverseDelta(appliedDeltas)
 	// // rewind the changes:
@@ -290,6 +291,7 @@ let conflictDeltaWarning = function(conflictDelta, appliedDeltas, errorMsg, grap
 	appliedDeltas = []
 	// create a msg to pass to the app.js or host.js in order to perform the nuclear option
 	rejectionMsg = {
+		type: 'conflictDelta',
 		error: errorMsg,
 		inverseDeltas: rewindDeltas,
 		conflictDelta: conflictDelta
