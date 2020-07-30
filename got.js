@@ -297,8 +297,8 @@ let conflictDeltaWarning = function(conflictDelta, appliedDeltas, errorMsg, grap
 		conflictDelta: conflictDelta
 	}
 	//TODO: this function seems to be causing false positives in the nuclear option, so for now we will not return the error
-	return null
-	// return rejectionMsg 
+	// return null
+	return rejectionMsg 
 }
 
 let rejectionMsg = null
