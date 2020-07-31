@@ -571,7 +571,7 @@ let applyDeltasToGraph = function (graph, delta) {
 						//  } 
 						
 						else if (prop != delta.from){
-							conflictDeltaWarning(delta, prop, 'warning: propchange "from" value does not match current value in graph', graph)
+							conflictDeltaWarning(delta, appliedDeltas, 'warning: propchange "from" value does not match current value in graph', graph)
 						}
 						else {
 							// change it:
