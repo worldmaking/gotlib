@@ -354,8 +354,10 @@ let applyDeltasToGraph = function (graph, delta) {
 			} break;
 			
 			case "newnode": {
-				console.log('newnode',delta)
-				
+				// lets see the abstraction pos
+				if(delta.category == 'abstraction'){
+					console.log('newnode',delta)
+				}
 				if(!delta.path){
 					
 					malformedDeltaRejection(delta, appliedDeltas, 'newnode delta contains no path', graph)
