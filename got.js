@@ -575,12 +575,15 @@ let applyDeltasToGraph = function (graph, delta) {
 						// if the prop is an array, we need to deepEqual it instead of !=
 						
 						else if(typeof prop == 'object' && deepEqual(prop, delta.from) === false){
-							console.log('snared', prop, delta.from, 'delta', delta)
+							let warningMsg = 'warning: propchange delta.from value ' + delta.from + 'does not match current value of ' + prop + ' in graph'
+							conflictDeltaWarning(delta, appliedDeltas, warningMsg, graph)
+
+						}
+						else if (typeof prop != 'object' && prop != delta.from){
+							let warningMsg = 'warning: propchange delta.from value ' + delta.from + 'does not match current value of ' + prop + ' in graph'
+							conflictDeltaWarning(delta, appliedDeltas, warningMsg, graph)
 						}
 						
-						else if (typeof prop != 'object' && prop != delta.from){
-							conflictDeltaWarning(delta, appliedDeltas, 'warning: propchange "from" value does not match current value in graph', graph)
-						}
 						else {
 							// change it:
 							o._props[delta.name] = delta.to;
