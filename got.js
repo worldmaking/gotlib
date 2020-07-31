@@ -572,7 +572,7 @@ let applyDeltasToGraph = function (graph, delta) {
 						// if the prop is an array, we need to deepEqual it instead of !=
 						
 						else if(typeof prop == 'object' && deepEqual(prop, delta.from) === false){
-							console.log('snared', prop, delta.from)
+							console.log('snared', prop, delta.from, 'delta', delta)
 						}
 						
 						else if (prop != delta.from){
