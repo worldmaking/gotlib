@@ -577,11 +577,16 @@ let applyDeltasToGraph = function (graph, delta) {
 						else if(typeof prop == 'object' && deepEqual(prop, delta.from) === false){
 							let warningMsg = 'warning: propchange delta.from value ' + delta.from + 'does not match current value of ' + prop + ' in graph'
 							conflictDeltaWarning(delta, appliedDeltas, warningMsg, graph)
+							
+							//TODO: for now, since I don't have a way to handle this conflict delta, apply propchange to graph
+							o._props[delta.name] = delta.to;
 
 						}
 						else if (typeof prop != 'object' && prop != delta.from){
 							let warningMsg = 'warning: propchange delta.from value ' + delta.from + 'does not match current value of ' + prop + ' in graph'
 							conflictDeltaWarning(delta, appliedDeltas, warningMsg, graph)
+							//TODO: for now, since I don't have a way to handle this conflict delta, apply propchange to graph
+							o._props[delta.name] = delta.to;
 						}
 						
 						else {
