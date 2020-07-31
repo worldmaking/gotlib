@@ -356,7 +356,6 @@ let applyDeltasToGraph = function (graph, delta) {
 			case "newnode": {
 				// lets see the abstraction pos
 				if(delta.category == 'abstraction'){
-					console.log('newnode',delta)
 				}
 				if(!delta.path){
 					
