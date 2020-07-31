@@ -578,7 +578,7 @@ let applyDeltasToGraph = function (graph, delta) {
 							console.log('snared', prop, delta.from, 'delta', delta)
 						}
 						
-						else if (prop != delta.from){
+						else if (typeof prop != 'object' && prop != delta.from || ){
 							conflictDeltaWarning(delta, appliedDeltas, 'warning: propchange "from" value does not match current value in graph', graph)
 						}
 						else {
