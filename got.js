@@ -294,7 +294,8 @@ let conflictDeltaWarning = function(conflictDelta, appliedDeltas, errorMsg, grap
 		type: 'conflictDelta',
 		error: errorMsg,
 		inverseDeltas: rewindDeltas,
-		conflictDelta: conflictDelta
+		conflictDelta: conflictDelta,
+		graph: graph
 	}
 	//TODO: this function seems to be causing false positives in the nuclear option, so for now we will not return the error
 	// return null
@@ -570,7 +571,7 @@ let applyDeltasToGraph = function (graph, delta) {
 						//  } 
 						
 						else if (prop != delta.from){
-							conflictDeltaWarning(delta, appliedDeltas, 'warning: propchange "from" value does not match current value in graph', graph)
+							conflictDeltaWarning(delta, prop, 'warning: propchange "from" value does not match current value in graph', graph)
 						}
 						else {
 							// change it:
