@@ -569,8 +569,8 @@ let applyDeltasToGraph = function (graph, delta) {
 
 
 						//  } 
-						
-						else if (prop != delta.from){
+						// if the prop is an array, we need to deepEqual it instead of !=
+						else if (prop != delta.from || (typeof prop == 'array' && deepEqual(prop, delta.from) != true)){
 							conflictDeltaWarning(delta, appliedDeltas, 'warning: propchange "from" value does not match current value in graph', graph)
 						}
 						else {
