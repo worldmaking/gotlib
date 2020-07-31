@@ -508,7 +508,6 @@ let applyDeltasToGraph = function (graph, delta) {
 
 						let o = ctr[name];
 						let prop = o._props[delta.name];
-						console.log(typeof prop, deepEqual(prop, delta.from))
 						if(!o._props){
 
 							//* i don't know what delta will trigger this:
@@ -572,8 +571,8 @@ let applyDeltasToGraph = function (graph, delta) {
 						//  } 
 						// if the prop is an array, we need to deepEqual it instead of !=
 						
-						else if(typeof prop == 'object' && deepEqual(prop, delta.from) != true){
-
+						else if(typeof prop == 'object' && deepEqual(prop, delta.from) === false){
+							console.log('snared', prop, delta.from)
 						}
 						
 						else if (prop != delta.from){
