@@ -354,6 +354,7 @@ let applyDeltasToGraph = function (graph, delta) {
 			} break;
 			
 			case "newnode": {
+				console.log('newnode',delta)
 				
 				if(!delta.path){
 					
