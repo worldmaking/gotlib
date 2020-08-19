@@ -1041,31 +1041,3 @@ module.exports = {
 	visit: visit
 
 }
-
-// let conflict1 = async (deltaA, deltaB, o) => {
-// 	/*
-// 	A1: propchange @x, a->b
-// 	B1: propchange @x, a->c  // cannot be applied because from does not match graph state @x=b
-
-// 	Rebase fix by first applying B1, then inverting, then A1, then applying a modified version of B1 (B1’) that has the corrected “from” value:
-
-// 	B1: propchange @x, a->c
-// 	^B1: propchange @x, c->a
-// 	A1: propchange @x, a->b
-// 	B1*: propchange @x, b*->c
-// 	*/
-
-// 	// B1: propchange @x, a->c
-// 	applyDeltasToGraph(graphContainer, deltaB)
-// 	console.log(graphContainer.nodes.lfo_1.rate)
-// 	// o._props[delta.name] = delta.to;
-// 	// ^B1: propchange @x, c->a
-// 	inverseDelta(deltaB)
-// 	// A1: propchange @x, a->b
-// 	o[deltaA.name] = foo
-// 	//applyDeltasToGraph(graphContainer, deltaA)
-
-// 	// o._props[delta.name] = previousDelta.to;
-// 	// B1*: propchange @x, b*->c
-
-// }
