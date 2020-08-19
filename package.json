@@ -1,6 +1,6 @@
 {
   "name": "gotlib",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "Graph Operational Transform Library",
   "main": "got.js",
   "scripts": {
@@ -11,10 +11,10 @@
     "url": "git+https://github.com/worldmaking/gotlib.git"
   },
   "keywords": [
-    "graphs",
+    "graph",
     "operational",
     "transform",
-    "graph",
+    "graphs",
     "js",
     "shared",
     "editing",
@@ -37,7 +37,9 @@
       "default"
     ]
   },
-  "dependencies": {},
+  "dependencies": {
+    "array-equal": "^1.0.0"
+  },
   "devDependencies": {
     "jest": "^26.4.0"
   }
