@@ -1,7 +1,6 @@
 const got = require('../got.js');
-let assert = require("assert");
 let fs = require("fs")
-const argv = require('yargs').argv
+
 let g;
 let g1;
 let d;
@@ -27,7 +26,6 @@ describe('acceptable deltas', () => {
         expect(typeof got.deltasToString(d)).toBe('string');
         g = got.graphFromDeltas(d)
         g1 = got.graphFromDeltas(d)
-        fs.writeFileSync('graphTest.json', JSON.stringify(g1, null, '\t'))
 
         expect(typeof g).toBe('object');
         expect(g).toMatchObject(simpleSceneSuccess);
@@ -74,7 +72,6 @@ describe('acceptable deltas', () => {
         expect(g1).toMatchObject(uniqueDisconnectSuccess);
     });
 
-// fs.writeFileSync('graphTest.json', JSON.stringify(got.applyDeltasToGraph(g, [deltas]), null, '\t'))
 
     test('apply repath', () => {
         let deltas = {"op": "repath", "paths": [ "lfo_1.fm_cv", "lfo_1.sine"]}
@@ -364,7 +361,7 @@ describe('conflicting delta sequences', () => {
       /* Runs after each test */
     })
 
-    test.only('#1 Two propchanges with same path, same “from”, but different “to”',  () =>{
+    test('#1 Two propchanges with same path, same “from”, but different “to”',  () =>{
         let deltas = [
             {"op":"propchange","path":"lfo_1.rate","name":"value","from":0.17,"to":34},
             {"op":"propchange","path":"lfo_1.rate","name":"value","from":0.17,"to":36}

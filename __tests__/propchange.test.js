@@ -1,7 +1,7 @@
 const got = require('../got.js');
-let assert = require("assert");
+
 let fs = require("fs")
-const argv = require('yargs').argv
+
 let g;
 let g1;
 let d;

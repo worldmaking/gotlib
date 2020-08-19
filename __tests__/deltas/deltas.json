@@ -1,0 +1,27 @@
+[
+  [
+    {
+      "op": "newnode",
+      "path": "noise",
+      "kind": "noise",
+      "pos": [
+        0,
+        0.8,
+        0
+      ],
+      "orient": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    [
+      {
+        "op": "newnode",
+        "path": "noise.out",
+        "kind": "outlet"
+      }
+    ]
+  ]
+]
